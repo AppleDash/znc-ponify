@@ -1,3 +1,15 @@
+/*
+	znc-ponify
+	By AppleDash or something.
+
+	Silently and transparently ponifies outgoing IRC messages through ZNC.
+
+	License is as follows:
+	You may use this code for anything noncommercial, so long as you credit
+	me for this code somewhere in your project.
+*/
+
+
 #include <znc/main.h>
 #include <znc/Modules.h>
 #include <znc/Chan.h>
@@ -38,6 +50,10 @@ private:
 			}
 		}
 	}
+
+	/*
+		Please don't hurt me.
+	*/
 	void SetupMap() {
 		replace["confound those dover boys"] = "confound these ponies";
 		replace["victoria's secret"] = "rarity's secret";
@@ -147,4 +163,4 @@ private:
 	}
 };
 
-NETWORKMODULEDEFS(CPonifyMod, "Ponifies outgoing text.");
+NETWORKMODULEDEFS(CPonifyMod, "Ponifies all outgoing IRC messages.");
