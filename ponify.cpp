@@ -23,21 +23,48 @@ class CPonifyMod : public CModule {
 public:
 	CSMap replace;
 	MODCONSTRUCTOR(CPonifyMod) {
+		debug = false;
 		SetupMap();
 	}
 	virtual ~CPonifyMod() { } 
 
 	virtual EModRet OnUserMsg(CString &sTarget, CString &sMessage) {
-		PonifyString(sMessage);
+		int replaced = PonifyString(sMessage);
+		if (debug) {
+			PutModule("Message to: " + sTarget + ", Replaced " + CString(replaced) + " words. New sentence: " + sMessage);	
+		}
 		PutIRC("PRIVMSG " + sTarget + " :" + sMessage);
 		return HALTCORE;
 	}
 
+	virtual void OnModCommand(const CString &sCommand) {
+		const CString &sCmd = sCommand.Token(0).AsLower();
+		const CString &args = sCommand.Token(1, true);
+
+		if (sCmd.Equals("help")) {
+			PutModule("Available commands:");
+			PutModule("HELP  - Displays this, silly!");
+			PutModule("DEBUG - Toggles debug mode on or off.");
+		} else if (sCmd.Equals("debug")) {
+			debug = !debug;
+			PutModule("Debug has been set to: " + CString((debug ? "True" : "False")));
+		} else {
+			PutModule("Invalid command. Try HELP.");
+		}
+	}
+
 private:
-	void PonifyString(CString &str) {
+	bool debug;
+
+	/*
+		Replaces words and phrases in a CString to their pony equivalents.
+		Return value is the number of replacements made.
+	*/
+	int PonifyString(CString &str) {
 		CSMap::iterator iter;
 		VCString out;
 		CString space = " ";
+		int swapped = 0;
 		str.Split(space, out);
 		for (iter = replace.begin(); iter != replace.end(); ++iter) {
 			CString k = iter->first;
@@ -46,9 +73,12 @@ private:
 				CString word = out[i];
 				if (word.AsLower().Equals(k.AsLower())) {
 					str.Replace(word, v);
+					swapped++;
 				}
 			}
 		}
+
+		return swapped;
 	}
 
 	/*
@@ -163,4 +193,4 @@ private:
 	}
 };
 
-NETWORKMODULEDEFS(CPonifyMod, "Ponifies all outgoing IRC messages.");
+NETWORKMODULEDEFS(CPonifyMod, "Ponifies all outgoing IRC messages.")
