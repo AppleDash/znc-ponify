@@ -44,10 +44,13 @@ public:
 		if (sCmd.Equals("help")) {
 			PutModule("Available commands:");
 			PutModule("HELP  - Displays this, silly!");
-			PutModule("DEBUG - Toggles debug mode on or off.");
+			PutModule("TOGGLE - Toggles ponification on or off.");
+			PutModule("DEBUG - Toggles debug mode on or off. (Print all changes.)");
 		} else if (sCmd.Equals("debug")) {
 			debug = !debug;
 			PutModule("Debug has been set to: " + CString((debug ? "True" : "False")));
+		} else if (sCmd.Equals("toggle")) {
+			PutModule("Nice try :P");
 		} else {
 			PutModule("Invalid command. Try HELP.");
 		}
@@ -72,7 +75,13 @@ private:
 			for(VCString::size_type i = 0; i != out.size(); i++) {
 				CString word = out[i];
 				if (word.AsLower().Equals(k.AsLower())) {
-					str.Replace(word, v);
+					if (IsCaps(word)) {
+						str.Replace(word, v.AsUpper());
+					} else if (IsFirstCaps(word)) {
+						str.Replace(word, FirstUpper(v));
+					} else {
+						str.Replace(word, v);
+					}
 					swapped++;
 				}
 			}
@@ -80,6 +89,30 @@ private:
 
 		return swapped;
 	}
+
+	bool IsCaps(CString &str) {
+		return (str.AsUpper().Equals(str, true));
+	}
+
+	bool IsFirstCaps(CString &str) {
+		VCString out;
+		str.Split("", out, false);
+		return IsCaps(out[0]);
+	}
+
+	CString &FirstUpper(CString &str) {
+		/*CString lstr = str.AsLower();
+		VCString out;
+		//lstr.Split("", out, false);
+		CString ret = out[0].AsUpper();
+		int i = 0;
+		for (i = 1; i != out.size(); i++) {
+			ret = ret + out[i];
+		}
+		return ret;*/
+		return str;
+	}
+
 
 	/*
 		Please don't hurt me.
