@@ -7,4 +7,4 @@ To install:
 
 `znc-buildmod ponify.cpp`
 
-`mv ponify,so ~/.znc/modules/`
+`mv ponify.so ~/.znc/modules/`
